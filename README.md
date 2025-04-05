@@ -1,2 +1,0 @@
-# AMG2
-WAIFU
