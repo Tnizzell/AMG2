@@ -8,6 +8,7 @@ const upload = multer({ dest: 'uploads/' });
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
+  timeout: 60000
 });
 
 router.post('/', upload.single('file'), async (req, res) => {
