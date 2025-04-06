@@ -1,7 +1,9 @@
 import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
-import { Configuration, OpenAIApi } from 'openai';
+import pkg from 'openai';
+const { Configuration, OpenAIApi } = pkg;
+
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
