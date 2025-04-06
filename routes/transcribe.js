@@ -7,7 +7,7 @@ const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 router.post('/', upload.single('file'), async (req, res) => {
@@ -15,9 +15,10 @@ router.post('/', upload.single('file'), async (req, res) => {
   if (!file) return res.status(400).json({ error: 'No audio file uploaded' });
 
   try {
+    console.log("Transcribing:", file.path);
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(file.path),
-      model: 'whisper-1',
+      model: "whisper-1"
     });
 
     fs.unlinkSync(file.path); // cleanup
