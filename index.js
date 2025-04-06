@@ -5,6 +5,10 @@ import dotenv from 'dotenv';
 import stripeRoutes from './routes/stripe.js';
 import replyRoutes from './routes/reply.js';
 import ttsRoutes from './routes/tts.js';
+import transcribeRoutes from './routes/transcribe.js';
+// ...
+app.use('/transcribe', transcribeRoutes);
+
 
 dotenv.config();
 const app = express();
