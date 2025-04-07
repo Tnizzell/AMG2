@@ -12,21 +12,37 @@ const openai = new OpenAI({
 
 router.post('/', upload.single('file'), async (req, res) => {
   const file = req.file;
-  if (!file) return res.status(400).json({ error: 'No audio file uploaded' });
+
+  if (!file) {
+    console.error('❌ No file uploaded');
+    return res.status(400).json({ error: 'No audio file uploaded' });
+  }
+
+  console.log('✅ File uploaded:', {
+    originalname: file.originalname,
+    mimetype: file.mimetype,
+    path: file.path,
+    size: file.size
+  });
 
   try {
-    console.log("Transcribing:", file.path);
+    const stream = fs.createReadStream(file.path);
+
     const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(file.path),
-      model: "whisper-1"
+      file: stream,
+      model: 'whisper-1',
+      response_format: 'json'
     });
+
+    console.log('✅ Transcription successful:', transcription.text);
 
     fs.unlinkSync(file.path); // cleanup
     res.json({ text: transcription.text });
   } catch (err) {
-    console.error('Whisper API Error:', err.response?.data || err.message);
+    console.error('❌ Whisper API Error:', err.response?.data || err.message || err);
     res.status(500).json({ error: 'Failed to transcribe' });
   }
 });
+
 
 export default router;
