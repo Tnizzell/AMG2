@@ -2,7 +2,6 @@ import express from 'express';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -11,17 +10,16 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-
 // ✅ Create Stripe checkout session
 router.post('/', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
-      customer_email: req.body.email, // frontend must send email!
+      customer_email: req.body.email,
       line_items: [
         {
-          price: 'price_1RBS9UKzstiuyGlTE5sKFOa1', // ✅ Use your PRICE id, not product id
+          price: 'price_1RBS9UKzstiuyGlTE5sKFOa1',
           quantity: 1,
         },
       ],
@@ -55,10 +53,11 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const email = session.customer_email;
+    const subscriptionId = session.subscription;
 
     const { error } = await supabase
       .from('users')
-      .update({ ispremium: true })
+      .update({ ispremium: true, stripe_subscription_id: subscriptionId })
       .eq('email', email);
 
     if (error) {
@@ -68,8 +67,30 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     }
   }
 
+  if (event.type === 'customer.subscription.deleted') {
+    const subscription = event.data.object;
+    const customerId = subscription.customer;
+
+    try {
+      const customer = await stripe.customers.retrieve(customerId);
+      const email = customer.email;
+
+      const { error } = await supabase
+        .from('users')
+        .update({ ispremium: false })
+        .eq('email', email);
+
+      if (error) {
+        console.error('❌ Supabase downgrade failed:', error.message);
+      } else {
+        console.log('✅ User downgraded after Stripe cancel:', email);
+      }
+    } catch (err) {
+      console.error('❌ Failed to retrieve Stripe customer:', err.message);
+    }
+  }
+
   res.status(200).send('Webhook processed');
 });
-
 
 export default router;
