@@ -23,3 +23,4 @@ router.post('/portal', async (req, res) => {
     }
   });
   
+  console.log('🛠️ Hit /portal route with body:', req.body);
