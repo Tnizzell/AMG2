@@ -12,7 +12,10 @@ dotenv.config();
 const app = express();
 app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
-app.use(cors());
+app.use(cors({
+    origin: ['https://amg-frontend.vercel.app'], // Add your frontend here
+    credentials: true
+  }));
 app.use(express.json());
 
 app.use('/transcribe', transcribeRoutes);
