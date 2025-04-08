@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
       customer_email: req.body.email, // frontend must send email!
       line_items: [
         {
-          price: 'price_1RAOmhQQPphcnXkXPmh1XYN9', // ✅ Use your PRICE id, not product id
+          price: 'price_1RBS9UKzstiuyGlTE5sKFOa1', // ✅ Use your PRICE id, not product id
           quantity: 1,
         },
       ],
