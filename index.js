@@ -6,16 +6,17 @@ import replyRoutes from './routes/reply.js';
 import ttsRoutes from './routes/tts.js';
 import transcribeRoutes from './routes/transcribe.js';
 
-dotenv.config(); // ✅ load env first
+dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/transcribe', transcribeRoutes); // ✅ move below app declaration
+app.use('/transcribe', transcribeRoutes);
 app.use('/reply', replyRoutes);
-app.use('/subscribe', stripeRoutes);
+app.use('/subscribe', stripeRoutes); // optional for checkout
+app.use('/stripe', stripeRoutes);    // ✅ REQUIRED for webhook
 app.use('/tts', ttsRoutes);
 
 const PORT = process.env.PORT || 8080;
