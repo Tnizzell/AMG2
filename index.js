@@ -17,7 +17,11 @@ app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
 // ✅ All other routes use JSON
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://amg-frontend.vercel.app', // ✅ your frontend URL
+    methods: ['GET', 'POST'],
+    credentials: true
+  }));
 
 // ✅ Route mounts
 app.use('/transcribe', transcribeRoutes);
