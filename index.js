@@ -8,7 +8,9 @@ import transcribeRoutes from './routes/transcribe.js';
 
 dotenv.config();
 
+
 const app = express();
+app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
 app.use(cors());
 app.use(express.json());
