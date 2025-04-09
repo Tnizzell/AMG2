@@ -9,6 +9,7 @@ import ttsRoutes from './routes/tts.js';
 import transcribeRoutes from './routes/transcribe.js';
 import portalRoutes from './routes/portal.js';
 
+
 dotenv.config();
 
 const app = express();
