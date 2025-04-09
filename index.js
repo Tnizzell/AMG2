@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { checkActiveSubscriptions } from './utils/cronCheck.js';
 
 import stripeRoutes from './routes/stripe.js';
 import replyRoutes from './routes/reply.js';
@@ -33,5 +34,10 @@ app.use('/subscribe', stripeRoutes);
 app.use('/tts', ttsRoutes);
 app.use('/portal', portalRoutes);
 
+setInterval(() => {
+    console.log('⏱️ Running cron job at', new Date().toLocaleString());
+    checkActiveSubscriptions();
+  }, 5 * 60 * 1000);
+  
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
