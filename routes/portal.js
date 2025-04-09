@@ -5,7 +5,7 @@ const router = express.Router(); // ✅ this was missing
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // ✅ New route to redirect user to Stripe billing portal
-router.post('/portal', async (req, res) => {
+router.post('/', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email is required' });
 
@@ -27,6 +27,7 @@ router.post('/portal', async (req, res) => {
     console.error('Stripe portal error:', err);
     res.status(500).json({ error: 'Failed to create portal session' });
   }
+  console.log('🔔 hit /portal')
 });
 
 export default router;
