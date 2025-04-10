@@ -1,10 +1,10 @@
-// routes/model.js
-const express = require('express');
+import express from 'express';
+import supabase from '../supabaseClient.js'; // ✅ make sure this is also ESM
+
 const router = express.Router();
-const supabase = require('../supabaseClient'); // or however you're set up
 
 router.get('/model-url', async (req, res) => {
-  const userId = req.headers['x-user-id']; // Or decode from token if you're using auth
+  const userId = req.headers['x-user-id'];
 
   if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
@@ -18,11 +18,10 @@ router.get('/model-url', async (req, res) => {
     return res.status(404).json({ error: 'Model not found for user' });
   }
 
-  // Define your internal model map (you can migrate this to Supabase Storage later)
   const modelMap = {
-    'gen9_A': 'https://cdn.yourdomain.com/models/gen9_A.glb',
-    'gen9_B': 'https://cdn.yourdomain.com/models/gen9_B.glb',
-    'gen9_flirty_b': 'https://cdn.yourdomain.com/models/gen9_flirty_b.glb',
+    gen9_A: 'https://amg2-production.up.railway.app/models/gen9_A.glb',
+    gen9_B: 'https://amg2-production.up.railway.app/models/gen9_B.glb',
+    gen9_flirty_b: 'https://amg2-production.up.railway.app/models/gen9_flirty_b.glb',
   };
 
   const modelUrl = modelMap[user.model_id];
@@ -34,4 +33,4 @@ router.get('/model-url', async (req, res) => {
   res.json({ url: modelUrl });
 });
 
-module.exports = router;
+export default router;
