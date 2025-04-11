@@ -39,10 +39,11 @@ app.options('*', cors());
 
 // ✅ Manual header backup (in case CORS still silently fails)
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://amg-frontend.vercel.app');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
+    res.header('Access-Control-Allow-Origin', 'https://amg-frontend.vercel.app');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-user-id');
+    next();
+  });
+  
 
 // ✅ Static model hosting
 app.use('/models', express.static(path.join(__dirname, 'public/models')));
