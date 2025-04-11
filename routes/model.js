@@ -19,7 +19,7 @@ router.get('/model-url', async (req, res) => {
   }
 
   const modelMap = {
-    gen9_A: 'https://amg2-production.up.railway.app/models/gen9_A.glb',
+    gen9_A: 'https://amg2-production.up.railway.app/models/gen9_toon_idle.glb',
     gen9_B: 'https://amg2-production.up.railway.app/models/gen9_B.glb',
     gen9_flirty_b: 'https://amg2-production.up.railway.app/models/gen9_flirty_b.glb',
   };
