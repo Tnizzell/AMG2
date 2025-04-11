@@ -19,39 +19,24 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// ✅ Full CORS handling (Vercel + local dev)
-const allowedOrigins = ['https://amg-frontend.vercel.app', 'http://localhost:3000'];
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+// ✅ CORS config (including x-user-id)
+const corsOptions = {
+  origin: ['https://amg-frontend.vercel.app', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id'],
+  credentials: true,
+};
 
-// ✅ Preflight handler (OPTIONS request support)
-app.options('*', cors());
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight
 
-// ✅ Manual header backup (in case CORS still silently fails)
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://amg-frontend.vercel.app');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-user-id');
-    next();
-  });
-  
-
-// ✅ Static model hosting
+// ✅ Serve static models
 app.use('/models', express.static(path.join(__dirname, 'public/models')));
 
-// ✅ Stripe raw body
+// ✅ Stripe webhook needs raw body
 app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
-// ✅ All other routes use JSON
+// ✅ JSON parsing for everything else
 app.use(express.json());
 
 // ✅ Mount routes
@@ -62,12 +47,12 @@ app.use('/tts', ttsRoutes);
 app.use('/portal', portalRoutes);
 app.use('/model', modelRoutes);
 
-// ✅ Cron
+// ✅ Run subscription cron every 5 min
 setInterval(() => {
   console.log('⏱️ Running cron job at', new Date().toLocaleString());
   checkActiveSubscriptions();
 }, 5 * 60 * 1000);
 
-// ✅ Start server
+// ✅ Launch server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
